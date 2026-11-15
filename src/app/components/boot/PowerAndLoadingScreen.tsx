@@ -121,7 +121,7 @@ export default function PowerAndLoadingScreen({stage, setStage}: Props) {
       <div className="mt-4 flex flex-col">
         <p ref={textRef} className="text-white">
           {stage === "loading" ? (
-            <> SYSTEM LOADING...{" "}
+            <> SYSTEM LOADING {" "}
               <span ref={percentRef}>0%</span>
             </>
             ) : (
