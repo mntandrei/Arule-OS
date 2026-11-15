@@ -17,13 +17,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Web OS | Your Personal Desktop",
-    template: "%s | Web OS",
+    default: "Arule OS | Your Personal Desktop",
+    template: "%s | Arule OS",
   },
   description:
     "A customizable web-based desktop environment with interactive windows, applications, and a personalized workspace.",
-  applicationName: "Web OS",
+  applicationName: "Arule OS",
   keywords: [
+    "Arule OS",
     "Web OS",
     "Browser OS",
     "Web Desktop",
