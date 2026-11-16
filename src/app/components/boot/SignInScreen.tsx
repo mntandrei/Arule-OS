@@ -1,6 +1,6 @@
 import { UserRound, ArrowRight } from "lucide-react";
 
-export default function SignInScreen() {
+export default function SignInScreen({ onSignIn }: { onSignIn: () => void }) {
   return (
     <main className="flex min-h-screen w-full items-center justify-center text-white">
       <div className="flex flex-col items-center gap-5">
@@ -15,6 +15,7 @@ export default function SignInScreen() {
 
         <button
           type="button"
+          onClick={onSignIn}
           className="group mt-3 flex items-center gap-3 rounded-lg border border-white/20 bg-white/15 px-8 py-3 text-sm font-medium tracking-wide text-white backdrop-blur-xl transition-all duration-300 hover:border-white/40 hover:bg-white/25 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
           Sign In
           <ArrowRight
