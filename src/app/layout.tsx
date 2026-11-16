@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   description:
     "A customizable web-based desktop environment with interactive windows, applications, and a personalized workspace.",
   applicationName: "Arule OS",
+  icons: {
+    icon: "/arule-os-icon.svg",
+  },
   keywords: [
     "Arule OS",
     "Web OS",
@@ -38,7 +41,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({children}: Readonly<{children: ReactNode;}>) {
+export default function RootLayout({children}: Readonly<{children: ReactNode}>) {
   return (
     <html lang="en">
       <body

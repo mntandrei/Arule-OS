@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 export default function PowerAndLoadingScreen({stage, setStage}: {stage: string; setStage: React.Dispatch<React.SetStateAction<string>>}) {
+  
   const textRef = useRef<HTMLParagraphElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
