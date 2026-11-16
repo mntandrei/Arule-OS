@@ -20,9 +20,13 @@ export default function Home() {
   
   useEffect(() => {
     if (!isHydrated) return;
-    
+
     saveSession(stage);
   }, [stage, isHydrated]);
+
+  if (!isHydrated) {
+    return <main className="min-h-screen bg-[#090d15]" />;
+  }
 
   return (
     <main className="bg-[#090d15]">
