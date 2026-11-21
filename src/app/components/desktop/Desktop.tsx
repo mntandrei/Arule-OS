@@ -1,26 +1,44 @@
 "use client";
 
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useRef, useState, useEffect} from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import DesktopGrid from "./DesktopGrid";
 import Taskbar from "./Taskbar";
 import type {AppId, IconPosition} from "../../types/desktop";
-import { saveIconPositions, getIconPositions } from "../../lib/storage/desktopStorage";
+import { saveIconPositions, getIconPositions } from "../../lib/storage/desktopStorage";   
 
 export default function Desktop() {
   const desktopRef = useRef<HTMLElement>(null);
   const [activeApp, setActiveApp] = useState<AppId | null>(null);
   const [isWifiOpen, setIsWifiOpen] = useState(false);
   const [isMutedOpen, setIsMutedOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const [iconPositions, setIconPositions] = useState<IconPosition[]>(() => getIconPositions() ?? [
+  const [iconPositions, setIconPositions] =
+    useState<IconPosition[]>([
       { id: "explorer", row: 1, column: 1 },
       { id: "browser", row: 2, column: 1 },
       { id: "settings", row: 3, column: 1 },
       { id: "trash", row: 4, column: 1 },
       { id: "about", row: 5, column: 1 },
     ]);
+
+  useEffect(() => {
+    const saved = getIconPositions();
+
+    if (saved !== null) {
+      setIconPositions(saved);
+    }
+
+    setIsLoaded(true);
+}, []);
+
+useEffect(() => {
+  if (!isLoaded) return;
+
+  saveIconPositions(iconPositions);
+}, [iconPositions, isLoaded]);
 
   const moveIcon = (id: AppId, row: number, column: number) => {
     setIconPositions((previous) => {
@@ -31,9 +49,7 @@ export default function Desktop() {
         return previous;
       }
 
-      const next = previous.map((icon) => icon.id === id ? { ...icon, row, column } : icon);
-      saveIconPositions(next);
-      return next;
+      return previous.map((icon) => icon.id === id ? { ...icon, row, column } : icon);
     });
   };
 
@@ -89,9 +105,6 @@ export default function Desktop() {
               previous[index].column
         );
 
-        if (changed) {
-          saveIconPositions(next);
-        }
         return changed ? next : previous;
       });
     },
@@ -114,12 +127,13 @@ export default function Desktop() {
     <main
       ref={desktopRef}
       className="relative h-dvh w-full overflow-hidden bg-[#090d15] text-white">
-      <DesktopGrid
-        onOpenApp={setActiveApp}
-        iconPositions={iconPositions}
-        onMoveIcon={moveIcon}
-        onGridResize={handleGridResize}/>
-
+      {isLoaded && (
+        <DesktopGrid
+          onOpenApp={setActiveApp}
+          iconPositions={iconPositions}
+          onMoveIcon={moveIcon}
+          onGridResize={handleGridResize}/>
+      )}
       {activeApp && (
         <div className="pointer-events-none fixed bottom-20 left-3 z-40 text-sm text-white/70">
           Selected: {activeApp}
