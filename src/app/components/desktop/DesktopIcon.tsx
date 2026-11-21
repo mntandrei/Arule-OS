@@ -3,13 +3,15 @@ import { Folder, Globe, Settings, Trash2, CircleHelp } from "lucide-react";
 type DesktopIconProps = {
   type: "folder" | "browser" | "settings" | "trash" | "CircleHelp";
   name: string;
+  onClick: () => void;
 };
 
-export default function DesktopIcon({ name, type }: DesktopIconProps) {
+export default function DesktopIcon({ name, type, onClick }: DesktopIconProps) {
   return (
 
     <button
       type="button"
+      onClick={onClick}
       className="flex flex-col items-center justify-center gap-1 rounded-lg p-1 transition-colors hover:bg-white/10">
       {type === "folder" && <Folder size={26} />}
       {type === "browser" && <Globe size={26} />}
