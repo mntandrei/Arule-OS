@@ -9,6 +9,8 @@ import { useGSAP } from "@gsap/react";
 export default function Desktop() {
   const desktopRef = useRef<HTMLElement>(null);
   const [activeApp, setActiveApp] = useState<AppId | null>(null);
+  const [isWifiOn, setIsWifiOn] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   useGSAP(() => {
     gsap.fromTo(
@@ -25,7 +27,7 @@ export default function Desktop() {
   return (
     <main ref={desktopRef} className="flex flex-col min-h-screen w-full bg-[#090d15] text-white">
       <DesktopGrid onOpenApp={setActiveApp} />
-      <Taskbar />
+      <Taskbar onWifiClick={() => setIsWifiOn(!isWifiOn)} onVolumeClick={() => setIsMuted(!isMuted)} />
     </main>
   );
 }

@@ -3,7 +3,12 @@ import { Wifi, Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function Taskbar() {
+type TaskbarProps = {
+  onWifiClick: () => void;
+  onVolumeClick: () => void;
+};
+
+export default function Taskbar({ onWifiClick, onVolumeClick }: TaskbarProps) {
     const [now, setNow] = useState<Date | null>(null);
 
     useEffect(() => {
@@ -32,11 +37,11 @@ export default function Taskbar() {
       
         <div className="absolute right-4 flex h-12 items-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-4 backdrop-blur-xl">
 
-            <button type="button" aria-label="Wi-Fi" className="rounded-lg p-2 transition-colors hover:bg-white/15">
+            <button type="button" aria-label="Wi-Fi" className="rounded-lg p-2 transition-colors hover:bg-white/15" onClick={onWifiClick}>
                 <Wifi size={20} />
             </button>
 
-            <button type="button" aria-label="Volume" className="rounded-lg p-2 transition-colors hover:bg-white/15">
+            <button type="button" aria-label="Volume" className="rounded-lg p-2 transition-colors hover:bg-white/15" onClick={onVolumeClick}>
                 <Volume2 size={20} />
             </button>
 
