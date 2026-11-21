@@ -1,25 +1,20 @@
 "use client";
 
 import {useCallback, useRef, useState} from "react";
-
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-
 import DesktopGrid from "./DesktopGrid";
 import Taskbar from "./Taskbar";
-
 import type {AppId, IconPosition} from "../../types/desktop";
+import { saveIconPositions, getIconPositions } from "../../lib/storage/desktopStorage";
 
 export default function Desktop() {
-const desktopRef = useRef<HTMLElement>(null);
-
+  const desktopRef = useRef<HTMLElement>(null);
   const [activeApp, setActiveApp] = useState<AppId | null>(null);
-
   const [isWifiOpen, setIsWifiOpen] = useState(false);
   const [isMutedOpen, setIsMutedOpen] = useState(false);
 
-  const [iconPositions, setIconPositions] =
-    useState<IconPosition[]>([
+  const [iconPositions, setIconPositions] = useState<IconPosition[]>(() => getIconPositions() ?? [
       { id: "explorer", row: 1, column: 1 },
       { id: "browser", row: 2, column: 1 },
       { id: "settings", row: 3, column: 1 },
@@ -36,7 +31,9 @@ const desktopRef = useRef<HTMLElement>(null);
         return previous;
       }
 
-      return previous.map((icon) => icon.id === id ? { ...icon, row, column } : icon);
+      const next = previous.map((icon) => icon.id === id ? { ...icon, row, column } : icon);
+      saveIconPositions(next);
+      return next;
     });
   };
 
@@ -92,6 +89,9 @@ const desktopRef = useRef<HTMLElement>(null);
               previous[index].column
         );
 
+        if (changed) {
+          saveIconPositions(next);
+        }
         return changed ? next : previous;
       });
     },
