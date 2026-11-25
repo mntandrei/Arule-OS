@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { DragEvent } from "react";
-
 import DesktopIcon from "./DesktopIcon";
-import type { DesktopIconProps } from "./DesktopIcon";
 import type {AppId,IconPosition} from "../../types/desktop";
+import { apps } from "../../lib/apps";
 
 type DesktopGridProps = {onOpenApp: (appId: AppId) => void;
   iconPositions: IconPosition[];
@@ -17,32 +16,6 @@ const CELL_WIDTH = 90;
 const CELL_HEIGHT = 56;
 const GAP = 8;
 
-const apps: Record< AppId,
-  {
-    name: string;
-    type: DesktopIconProps["type"];
-  }> = {
-  explorer: {
-    name: "File Explorer",
-    type: "folder",
-  },
-  browser: {
-    name: "Browser",
-    type: "browser",
-  },
-  settings: {
-    name: "Settings",
-    type: "settings",
-  },
-  trash: {
-    name: "Trash",
-    type: "trash",
-  },
-  about: {
-    name: "About",
-    type: "circleHelp",
-  },
-};
 
 export default function DesktopGrid({onOpenApp, iconPositions, onMoveIcon, onGridResize}: DesktopGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -162,8 +135,7 @@ export default function DesktopGrid({onOpenApp, iconPositions, onMoveIcon, onGri
               <DesktopIcon
                 type={app.type}
                 name={app.name}
-                onClick={() =>
-                  onOpenApp(position.id)}/>
+                onClick={() => onOpenApp(position.id)}/>
             </div>
           );
         })}

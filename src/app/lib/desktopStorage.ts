@@ -1,4 +1,4 @@
-import type { IconPosition } from "../../types/desktop";
+import type { IconPosition } from "../types/desktop";
 
 export function saveIconPositions(iconPositions: IconPosition[]) {
     localStorage.setItem("iconPositions", JSON.stringify(iconPositions));

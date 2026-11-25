@@ -4,7 +4,7 @@ import PowerAndLoadingScreen from './components/boot/PowerAndLoadingScreen';
 import SignInScreen from './components/boot/SignInScreen';
 import Desktop from "./components/desktop/Desktop";
 import { useState, useEffect } from "react";
-import { getSession, saveSession } from "./lib/storage/session";
+import { getSession, saveSession } from "./lib/session";
 
 export default function Home() {
   const [stage, setStage] = useState("power");

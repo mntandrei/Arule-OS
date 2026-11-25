@@ -3,14 +3,19 @@
 import { Wifi, Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import type { WindowState, AppId } from "../../types/desktop";
+import DesktopIcon from "./DesktopIcon";
+import { apps } from "@/app/lib/apps";
 
 type TaskbarProps = {
   onWifiClick: () => void;
   onVolumeClick: () => void;
+  openWindows: WindowState[];
+  onToggleMinimize: (id: AppId) => void;
 };
 
-export default function Taskbar({onWifiClick, onVolumeClick,}: TaskbarProps) {
-  const [now, setNow] =useState<Date | null>(null);
+export default function Taskbar({onWifiClick, onVolumeClick, openWindows, onToggleMinimize}: TaskbarProps) {
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
     setNow(new Date());
@@ -22,16 +27,18 @@ export default function Taskbar({onWifiClick, onVolumeClick,}: TaskbarProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const time = now?.toLocaleTimeString(
-    "ro-RO",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  );
+  const time = now?.toLocaleTimeString("ro-RO", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-  const date = now?.toLocaleDateString(
-    "ro-RO"
+  const date = now?.toLocaleDateString("ro-RO");
+
+  const activeZIndex = Math.max(
+    0,
+    ...openWindows
+      .filter((win) => !win.isMinimized)
+      .map((win) => win.zIndex)
   );
 
   return (
@@ -40,7 +47,7 @@ export default function Taskbar({onWifiClick, onVolumeClick,}: TaskbarProps) {
         <button
           type="button"
           aria-label="Open Start Menu"
-          className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200 hover:bg-white/15 active:scale-95 focus-visible:outline-2 focus-visible:outline-emerald-400">
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-200 hover:bg-white/15 active:scale-95 focus-visible:outline-2 focus-visible:outline-emerald-400">
           <Image
             src="/arule-os-taskbar.svg"
             alt=""
@@ -48,9 +55,27 @@ export default function Taskbar({onWifiClick, onVolumeClick,}: TaskbarProps) {
             height={30}
             loading="eager"/>
         </button>
+
+        {openWindows.length > 0 && (
+          <div className="mx-1 h-6 w-px shrink-0 bg-white/20" />
+        )}
+
+        {openWindows.map((win) => {const app = apps[win.id];
+
+          return (
+            <DesktopIcon
+              key={win.id}
+              name={app.name}
+              type={app.type}
+              variant="taskbar"
+              isActive={!win.isMinimized && win.zIndex === activeZIndex}
+              onClick={() => onToggleMinimize(win.id)}/>
+          );
+        })}
       </div>
 
       <div className="absolute right-4 flex h-12 items-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-4 backdrop-blur-xl">
+
         <button
           type="button"
           aria-label="Wi-Fi"

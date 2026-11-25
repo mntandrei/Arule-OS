@@ -5,3 +5,14 @@ export type IconPosition = {
   row: number;
   column: number;
 };
+
+export type WindowState = {
+  id: AppId;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isMinimized: boolean;
+  isMaximized: boolean;
+  zIndex: number;
+};
