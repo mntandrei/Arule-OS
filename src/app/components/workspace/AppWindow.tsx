@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import {Minus, Square, X, AppWindow as WindowIcon} from "lucide-react";
+import {Minus, Square, X, AppWindow as WindowIcon, Copy} from "lucide-react";
 import type { ReactNode, PointerEvent } from "react";
 import type { AppId, WindowState } from "../../types/desktop";
 
@@ -11,9 +11,11 @@ type AppWindowProps = {
   onClickClose?: () => void;
   windowState: WindowState;
   onMove: (id: AppId, x: number, y: number) => void;
+  onMinimize: (id: AppId) => void;
+  onMaximize: (id: AppId) => void;
 };
 
-export default function AppWindow({title, children, onClickClose, windowState, onMove}: AppWindowProps) {
+export default function AppWindow({title, children, onClickClose, windowState, onMove, onMinimize, onMaximize}: AppWindowProps) {
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{pointerId: number; startX: number; startY: number; windowX: number; windowY: number;} | null>(null);
 
@@ -78,12 +80,13 @@ export default function AppWindow({title, children, onClickClose, windowState, o
   return (
     <section
       style={{
-        left: windowState.x,
-        top: windowState.y,
-        width: windowState.width,
-        height: windowState.height,
+        left: windowState.isMaximized ? 0 : windowState.x,
+        top: windowState.isMaximized ? 0 : windowState.y,
+        width: windowState.isMaximized ? "100%" : windowState.width,
+        height: windowState.isMaximized ? "calc(100% - 72px)" : windowState.height,
         zIndex: windowState.zIndex,
-        display: windowState.isMinimized ? "none" : undefined}}
+        display: windowState.isMinimized ? "none" : undefined,
+      }}
 
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -110,17 +113,22 @@ export default function AppWindow({title, children, onClickClose, windowState, o
           <button
             type="button"
             aria-label="Minimize window"
+            onClick={() => onMinimize(windowState.id)}
             className="flex h-8 w-9 cursor-pointer items-center justify-center rounded-lg text-white/50 transition-colors hover:bg-white/10 hover:text-white">
             <Minus size={16} />
           </button>
 
           <button
             type="button"
-            aria-label="Maximize window"
+            aria-label={windowState.isMaximized ? "Restore window" : "Maximize window"}
+            onClick={() => onMaximize(windowState.id)}
             className="flex h-8 w-9 cursor-pointer items-center justify-center rounded-lg text-white/50 transition-colors hover:bg-white/10 hover:text-white">
-            <Square size={14} />
+            {windowState.isMaximized ? (
+              <Copy size={14} />
+            ) : (
+              <Square size={14} />
+            )}
           </button>
-
           <button
             type="button"
             aria-label="Close window"

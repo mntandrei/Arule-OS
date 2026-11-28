@@ -12,15 +12,28 @@ import AppWindow from "../workspace/AppWindow";
 import Browser from "../apps/Browser";
 import About from "../apps/About";
 import type { WindowState } from "../../types/desktop";
+import QuickSettings from "../panels/QuickSettings";
 
 export default function Desktop() {
   const desktopRef = useRef<HTMLElement>(null);
   const [openWindows, setOpenWindows] = useState<WindowState[]>([]);
-  const [isWifiOpen, setIsWifiOpen] = useState(false);
-  const [isMutedOpen, setIsMutedOpen] = useState(false);
+  const [isQuickSettingsOpen, setIsQuickSettingsOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [areWindowsLoaded, setAreWindowsLoaded] = useState(false);
+  const [isWifiEnabled, setIsWifiEnabled] = useState(true);
+  const [isBluetoothEnabled, setIsBluetoothEnabled] = useState(false);
+  const [volume, setVolume] = useState(100);
+  const [previousVolume, setPreviousVolume] = useState(100);
 
+  const toggleMute = () => {
+  if (volume > 0) {
+    setPreviousVolume(volume);
+    setVolume(0);
+  } else {
+    setVolume(previousVolume);
+  }
+};
+  
   const openApp = (id: AppId) => {
   const desktop = desktopRef.current;
     if (!desktop) return;
@@ -117,6 +130,16 @@ useEffect(() => {
       return previous.map((icon) => icon.id === id ? { ...icon, row, column } : icon);
     });
   };
+
+  const toggleMaximize = (id: AppId) => {
+  setOpenWindows((prev) =>
+    prev.map((win) =>
+      win.id === id
+        ? { ...win, isMaximized: !win.isMaximized }
+        : win
+    )
+  );
+};
 
   const handleGridResize = useCallback(
     (columns: number, rows: number) => {
@@ -237,7 +260,9 @@ const toggleMinimize = (id: AppId) => {
           title={win.id}
           windowState={win}
           onMove={moveWindow}
-          onClickClose={() => setOpenWindows((prev) => prev.filter((item) => item.id !== win.id))}>
+          onClickClose={() => setOpenWindows((prev) => prev.filter((item) => item.id !== win.id))}
+          onMinimize={toggleMinimize}
+          onMaximize={toggleMaximize}>
           {win.id === "browser" && <Browser />}
           {win.id === "about" && <About />}
           {win.id !== "browser" && win.id !== "about" && <p>Test application</p>}
@@ -247,8 +272,20 @@ const toggleMinimize = (id: AppId) => {
       <Taskbar
         openWindows={openWindows}
         onToggleMinimize={toggleMinimize}
-        onWifiClick={() => setIsWifiOpen((previous) => !previous)}
-        onVolumeClick={() => setIsMutedOpen((previous) => !previous)}/>
+        onQuickSettingsClick={() => setIsQuickSettingsOpen((prev) => !prev)}
+        isWifiEnabled={isWifiEnabled}
+        volume={volume}/>
+
+        {isQuickSettingsOpen && (
+          <QuickSettings
+            isWifiEnabled={isWifiEnabled}
+            isBluetoothEnabled={isBluetoothEnabled}
+            volume={volume}
+            onToggleWifi={() => setIsWifiEnabled((prev) => !prev)}
+            onToggleBluetooth={() => setIsBluetoothEnabled((prev) => !prev)}
+            onVolumeChange={setVolume}
+            onToggleMute={toggleMute}/>
+        )}
     </main>
   );
 }

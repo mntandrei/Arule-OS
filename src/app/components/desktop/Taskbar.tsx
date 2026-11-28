@@ -1,6 +1,6 @@
 "use client";
 
-import { Wifi, Volume2 } from "lucide-react";
+import { Wifi, WifiOff, Volume2, VolumeX } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import type { WindowState, AppId } from "../../types/desktop";
@@ -8,13 +8,14 @@ import DesktopIcon from "./DesktopIcon";
 import { apps } from "@/app/lib/apps";
 
 type TaskbarProps = {
-  onWifiClick: () => void;
-  onVolumeClick: () => void;
   openWindows: WindowState[];
   onToggleMinimize: (id: AppId) => void;
+  onQuickSettingsClick: () => void;
+  isWifiEnabled: boolean;
+  volume: number;
 };
 
-export default function Taskbar({onWifiClick, onVolumeClick, openWindows, onToggleMinimize}: TaskbarProps) {
+export default function Taskbar({openWindows, onToggleMinimize, onQuickSettingsClick, isWifiEnabled, volume}: TaskbarProps) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -75,27 +76,20 @@ export default function Taskbar({onWifiClick, onVolumeClick, openWindows, onTogg
       </div>
 
       <div className="absolute right-4 flex h-12 items-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-4 backdrop-blur-xl">
-
         <button
           type="button"
-          aria-label="Wi-Fi"
-          onClick={onWifiClick}
-          className="rounded-lg p-2 transition-colors hover:bg-white/15">
-          <Wifi size={20} />
-        </button>
-
-        <button
-          type="button"
-          aria-label="Volume"
-          onClick={onVolumeClick}
-          className="rounded-lg p-2 transition-colors hover:bg-white/15">
-          <Volume2 size={20} />
+          aria-label="Open Quick Settings"
+          onClick={onQuickSettingsClick}
+          className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white/15">
+          {isWifiEnabled ? <Wifi size={20} /> : <WifiOff size={20} />}
+          {volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
 
         <div className="flex flex-col items-end text-xs">
           <span>{time ?? "--:--"}</span>
           <span>{date ?? "--.--.----"}</span>
         </div>
+
       </div>
     </footer>
   );
